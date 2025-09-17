@@ -107,11 +107,18 @@ jobs:
           ZONE_ID=$(aws route53 list-hosted-zones-by-name --dns-name rafftec.click --query 'HostedZones[0].Id' --output text | cut -d'/' -f3)
           if [ "$ZONE_ID" != "None" ] && [ "$ZONE_ID" != "" ]; then terraform import aws_route53_zone.main $ZONE_ID || true; fi
           
-          # Import API Gateway voices resource if it exists
-          terraform import aws_api_gateway_resource.voices 528y1o1xm3/voices || true
+          # Get API Gateway resource IDs and import them
+          API_ID="528y1o1xm3"
+          VOICES_RESOURCE_ID=$(aws apigateway get-resources --rest-api-id $API_ID --query 'items[?pathPart==`voices`].id' --output text)
+          if [ ! -z "$VOICES_RESOURCE_ID" ] && [ "$VOICES_RESOURCE_ID" != "None" ]; then
+            terraform import aws_api_gateway_resource.voices $API_ID/$VOICES_RESOURCE_ID || true
+          fi
           
           # Import Cognito authorizer if it exists
-          terraform import aws_api_gateway_authorizer.cognito_authorizer 528y1o1xm3/voicebox-authorizer || true
+          AUTHORIZER_ID=$(aws apigateway get-authorizers --rest-api-id $API_ID --query 'items[?name==`voicebox-authorizer`].id' --output text)
+          if [ ! -z "$AUTHORIZER_ID" ] && [ "$AUTHORIZER_ID" != "None" ]; then
+            terraform import aws_api_gateway_authorizer.cognito_authorizer $API_ID/$AUTHORIZER_ID || true
+          fi
           
           # Import Lambda permissions if they exist
           terraform import aws_lambda_permission.api_gateway_new_post PostReader_NewPost/AllowNewPostInvoke || true
