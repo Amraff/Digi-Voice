@@ -83,6 +83,12 @@ jobs:
         run: |
           terraform import aws_dynamodb_table.table1 posts || true
           terraform import aws_iam_role.iam_role lambda_functions_role || true
+          POLICY_ARN=$(aws iam list-policies --query 'Policies[?PolicyName==`lambda_functions`].Arn' --output text)
+          if [ ! -z "$POLICY_ARN" ]; then terraform import aws_iam_policy.iam_policy $POLICY_ARN || true; fi
+          terraform import aws_lambda_function.new_posts_lambda PostReader_NewPost || true
+          terraform import aws_lambda_function.convert_to_audio PostReader_ConvertToAudio || true
+          terraform import aws_lambda_function.get_post PostReader_GetPost || true
+          terraform import aws_lambda_function.voices PostReader_Voices || true
 
       - name: Terraform Plan
         working-directory: ./terraform
