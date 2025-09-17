@@ -107,6 +107,7 @@ jobs:
           terraform import aws_lambda_permission.api_gateway_new_post PostReader_NewPost/AllowNewPostInvoke || true
           terraform import aws_lambda_permission.api_gateway_get_post PostReader_GetPost/AllowGetPostInvoke || true
           terraform import aws_lambda_permission.api_gateway_voices PostReader_Voices/AllowVoicesInvoke || true
+          terraform import aws_lambda_permission.allow_sns PostReader_ConvertToAudio/AllowExecutionFromSNS || true
 
       - name: Terraform Plan
         working-directory: ./terraform
