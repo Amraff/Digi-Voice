@@ -24,6 +24,8 @@ resource "aws_lambda_function" "new_posts_lambda" {
       SNS_TOPIC     = aws_sns_topic.sns_topic.arn
     }
   }
+
+  depends_on = [aws_iam_role.iam_role, aws_dynamodb_table.table1, aws_sns_topic.sns_topic]
 }
 
 # ---------------------------
