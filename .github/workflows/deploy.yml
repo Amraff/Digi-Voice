@@ -65,7 +65,7 @@ jobs:
       # -----------------------------
       - name: Upload Frontend to S3 with cache-busting
         run: |
-          aws s3 sync ./frontend s3://polly-app-static-website-20251809 \
+          aws s3 sync ./website s3://polly-app-static-website-20251809 \
             --delete --exact-timestamps \
             --cache-control "no-cache, no-store, must-revalidate" \
             --expires 0
