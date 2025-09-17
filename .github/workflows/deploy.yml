@@ -1,0 +1,71 @@
+name: Deploy VoiceBox App
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.6.6
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1   # change if different
+
+      # -----------------------------
+      # 📦 Package & Upload Lambda
+      # -----------------------------
+      - name: Package Lambda functions
+        run: |
+          mkdir -p terraform/deploy
+          cd lambda
+          zip -r ../terraform/deploy/handler.zip handler.py
+          zip -r ../terraform/deploy/get_post.zip get_post.py
+          zip -r ../terraform/deploy/convert_to_audio.zip convert_to_audio.py
+          cd ..
+
+      - name: Upload Lambda Zips to S3
+        run: |
+          aws s3 sync terraform/deploy s3://voicebox-tts-bucket/deploy \
+            --exact-timestamps \
+            --cache-control "no-cache, no-store, must-revalidate" \
+            --expires 0
+
+      # -----------------------------
+      # 🚀 Deploy Infra (Terraform)
+      # -----------------------------
+      - name: Terraform Init
+        working-directory: ./terraform
+        run: terraform init
+
+      - name: Terraform Plan
+        working-directory: ./terraform
+        run: terraform plan -out=tfplan
+
+      - name: Terraform Apply
+        working-directory: ./terraform
+        run: terraform apply -auto-approve tfplan
+
+      # -----------------------------
+      # 🌐 Deploy Frontend to S3
+      # -----------------------------
+      - name: Upload Frontend to S3 with cache-busting
+        run: |
+          aws s3 sync ./frontend s3://voicebox-tts-bucket \
+            --delete --exact-timestamps \
+            --cache-control "no-cache, no-store, must-revalidate" \
+            --expires 0
