@@ -100,7 +100,10 @@ jobs:
           terraform import aws_cloudwatch_log_group.get_post /aws/lambda/PostReader_GetPost || true
           terraform import aws_cloudwatch_log_group.voices /aws/lambda/PostReader_Voices || true
           
-          # Skip Lambda permissions as they're difficult to import and will be recreated
+          # Import Lambda permissions if they exist
+          terraform import aws_lambda_permission.api_gateway_new_post PostReader_NewPost:AllowNewPostInvoke || true
+          terraform import aws_lambda_permission.api_gateway_get_post PostReader_GetPost:AllowGetPostInvoke || true
+          terraform import aws_lambda_permission.api_gateway_voices PostReader_Voices:AllowVoicesInvoke || true
 
       - name: Terraform Plan
         working-directory: ./terraform
