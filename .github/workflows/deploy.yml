@@ -53,15 +53,15 @@ jobs:
         working-directory: ./terraform
         run: terraform init
 
-      - name: Terraform Plan
-        working-directory: ./terraform
-        run: terraform plan -out=tfplan
-
       - name: Import existing resources
         working-directory: ./terraform
         run: |
           terraform import aws_dynamodb_table.table1 posts || true
           terraform import aws_iam_role.iam_role lambda_functions_role || true
+
+      - name: Terraform Plan
+        working-directory: ./terraform
+        run: terraform plan -out=tfplan
 
       - name: Terraform Apply
         working-directory: ./terraform
