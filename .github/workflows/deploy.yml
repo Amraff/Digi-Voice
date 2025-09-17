@@ -164,7 +164,7 @@ jobs:
           
           # Update auth.js with actual Cognito values
           aws s3 cp s3://polly-app-static-website-20251809/auth.js ./temp-auth.js
-          sed -i "s/YOUR_USER_POOL_ID/$USER_POOL_ID/g" ./temp-auth.js
-          sed -i "s/YOUR_CLIENT_ID/$CLIENT_ID/g" ./temp-auth.js
+          sed -i "s|YOUR_USER_POOL_ID|$USER_POOL_ID|g" ./temp-auth.js
+          sed -i "s|YOUR_CLIENT_ID|$CLIENT_ID|g" ./temp-auth.js
           aws s3 cp ./temp-auth.js s3://polly-app-static-website-20251809/auth.js
         working-directory: ./terraform
