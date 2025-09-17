@@ -9,7 +9,7 @@ data "archive_file" "lambda_new_post" {
 
 resource "aws_lambda_function" "new_posts_lambda" {
   function_name = "PostReader_NewPost"
-  runtime       = "python3.13"
+  runtime       = "python3.12"
   role          = aws_iam_role.iam_role.arn
   memory_size   = var.memory_size_lambda
   timeout       = var.timeout_lambda
@@ -37,7 +37,7 @@ data "archive_file" "lambda_convert_to_audio" {
 
 resource "aws_lambda_function" "convert_to_audio" {
   function_name = "PostReader_ConvertToAudio"
-  runtime       = "python3.13"
+  runtime       = "python3.12"
   role          = aws_iam_role.iam_role.arn
   memory_size   = var.memory_size_lambda
   timeout       = var.timeout_lambda
@@ -65,7 +65,7 @@ data "archive_file" "lambda_get_post" {
 
 resource "aws_lambda_function" "get_post" {
   function_name = "PostReader_GetPost"
-  runtime       = "python3.13"
+  runtime       = "python3.12"
   role          = aws_iam_role.iam_role.arn
   memory_size   = var.memory_size_lambda
   timeout       = var.timeout_lambda
@@ -92,7 +92,7 @@ data "archive_file" "lambda_voices" {
 
 resource "aws_lambda_function" "voices" {
   function_name = "PostReader_Voices"
-  runtime       = "python3.13"
+  runtime       = "python3.12"
   role          = aws_iam_role.iam_role.arn
   memory_size   = var.memory_size_lambda
   timeout       = var.timeout_lambda
