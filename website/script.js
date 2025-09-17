@@ -1,4 +1,5 @@
-var API_BASE_URL = "https://qbya30xwka.execute-api.us-east-1.amazonaws.com/prod";
+// Use the correct deployed API Gateway URL
+var API_BASE_URL = "https://e2pstfvnd9.execute-api.us-east-1.amazonaws.com/prod";
 
 function pollStatus(postId) {
   let interval = setInterval(function () {

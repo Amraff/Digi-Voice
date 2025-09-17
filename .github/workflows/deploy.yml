@@ -40,7 +40,7 @@ jobs:
 
       - name: Upload Lambda Zips to S3
         run: |
-          aws s3 sync terraform/deploy s3://voicebox-tts-bucket/deploy \
+          aws s3 sync terraform/deploy s3://mp3-pollybucket-app-20251809/deploy \
             --exact-timestamps \
             --cache-control "no-cache, no-store, must-revalidate" \
             --expires 0
@@ -65,7 +65,7 @@ jobs:
       # -----------------------------
       - name: Upload Frontend to S3 with cache-busting
         run: |
-          aws s3 sync ./frontend s3://voicebox-tts-bucket \
+          aws s3 sync ./frontend s3://polly-app-static-website-20251809 \
             --delete --exact-timestamps \
             --cache-control "no-cache, no-store, must-revalidate" \
             --expires 0
