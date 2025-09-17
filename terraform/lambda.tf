@@ -5,12 +5,19 @@ resource "aws_lambda_function" "new_posts_lambda" {
   function_name = "PostReader_NewPost"
   runtime       = "python3.12"
   role          = aws_iam_role.iam_role.arn
-  memory_size   = 128
-  timeout       = 30
+  memory_size   = 256
+  timeout       = 60
 
   handler = "handler.lambda_handler"
   s3_bucket = var.bucket_name
   s3_key    = "deploy/handler.zip"
+
+  environment {
+    variables = {
+      DB_TABLE_NAME = aws_dynamodb_table.table1.name
+      SNS_TOPIC     = aws_sns_topic.sns_topic.arn
+    }
+  }
 }
 
 # ---------------------------
@@ -20,12 +27,19 @@ resource "aws_lambda_function" "convert_to_audio" {
   function_name = "PostReader_ConvertToAudio"
   runtime       = "python3.12"
   role          = aws_iam_role.iam_role.arn
-  memory_size   = 128
-  timeout       = 30
+  memory_size   = 256
+  timeout       = 120
 
   handler = "convert_to_audio.lambda_handler"
   s3_bucket = var.bucket_name
   s3_key    = "deploy/convert_to_audio.zip"
+
+  environment {
+    variables = {
+      BUCKET_NAME   = var.bucket_name
+      DB_TABLE_NAME = aws_dynamodb_table.table1.name
+    }
+  }
 }
 
 # ---------------------------
@@ -35,12 +49,18 @@ resource "aws_lambda_function" "get_post" {
   function_name = "PostReader_GetPost"
   runtime       = "python3.12"
   role          = aws_iam_role.iam_role.arn
-  memory_size   = 128
+  memory_size   = 256
   timeout       = 30
 
   handler = "get_post.lambda_handler"
   s3_bucket = var.bucket_name
   s3_key    = "deploy/get_post.zip"
+
+  environment {
+    variables = {
+      DB_TABLE_NAME = aws_dynamodb_table.table1.name
+    }
+  }
 }
 
 # ---------------------------
