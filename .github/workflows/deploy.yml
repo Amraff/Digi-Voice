@@ -89,6 +89,12 @@ jobs:
           terraform import aws_lambda_function.convert_to_audio PostReader_ConvertToAudio || true
           terraform import aws_lambda_function.get_post PostReader_GetPost || true
           terraform import aws_lambda_function.voices PostReader_Voices || true
+          
+          # Import SNS resources if they exist
+          SNS_TOPIC_ARN=$(aws sns list-topics --query 'Topics[?contains(TopicArn, `polly-app-topic`)].TopicArn' --output text)
+          if [ ! -z "$SNS_TOPIC_ARN" ]; then terraform import aws_sns_topic.sns_topic $SNS_TOPIC_ARN || true; fi
+          
+          # Skip Lambda permissions as they're difficult to import and will be recreated
 
       - name: Terraform Plan
         working-directory: ./terraform
