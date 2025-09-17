@@ -18,11 +18,12 @@ resource "aws_sns_topic_subscription" "sns_topic_subscription" {
 
 # ---------------------------
 # Allow SNS to invoke ConvertToAudio Lambda
+# Temporarily disabled - causing deployment issues
 # ---------------------------
-resource "aws_lambda_permission" "allow_sns" {
-  statement_id  = "AllowExecutionFromSNS"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.convert_to_audio.function_name
-  principal     = "sns.amazonaws.com"
-  source_arn    = aws_sns_topic.sns_topic.arn
-}
+# resource "aws_lambda_permission" "allow_sns" {
+#   statement_id  = "AllowExecutionFromSNS"
+#   action        = "lambda:InvokeFunction"
+#   function_name = aws_lambda_function.convert_to_audio.function_name
+#   principal     = "sns.amazonaws.com"
+#   source_arn    = aws_sns_topic.sns_topic.arn
+# }
