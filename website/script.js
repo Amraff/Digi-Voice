@@ -3,6 +3,14 @@
 // ---------------------------
 var API_BASE_URL = "https://e2pstfvnd9.execute-api.us-east-1.amazonaws.com/prod";
 
+// Fallback voices when API is not available
+var FALLBACK_VOICES = [
+  {Id: "Joanna", Name: "Joanna", LanguageName: "US English"},
+  {Id: "Matthew", Name: "Matthew", LanguageName: "US English"},
+  {Id: "Amy", Name: "Amy", LanguageName: "British English"},
+  {Id: "Brian", Name: "Brian", LanguageName: "British English"}
+];
+
 // ---------------------------
 // Poll job status until completed
 // ---------------------------
@@ -74,7 +82,9 @@ document.getElementById("sayButton").onclick = function () {
       pollStatus(response);
     },
     error: function (xhr) {
-      alert("Error: " + xhr.responseText);
+      console.error("API not available:", xhr.statusText);
+      document.getElementById("postIDreturned").textContent = "API not deployed yet. Please deploy your Terraform infrastructure first.";
+      document.getElementById("postIDreturned").style.color = "orange";
     },
   });
 };
@@ -103,7 +113,16 @@ function loadVoices() {
     },
     error: function (xhr) {
       console.error("Error loading voices:", xhr.responseText);
-      alert("Could not load voices. Check backend /voices Lambda.");
+      
+      // Use fallback voices when API is not available
+      $("#voiceSelected").empty();
+      FALLBACK_VOICES.forEach(function (voice) {
+        $("#voiceSelected").append(
+          `<option value="${voice.Id}">${voice.Name} (${voice.LanguageName})</option>`
+        );
+      });
+      
+      console.log("Using fallback voices - API not available");
     }
   });
 }
