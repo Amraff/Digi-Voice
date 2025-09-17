@@ -58,14 +58,29 @@ resource "aws_lambda_function" "voices" {
   s3_key    = "deploy/voices.zip"
 }
 
-# Temporarily disabled - causing deployment issues
-# resource "aws_lambda_permission" "api_gateway_voices" {
-#   statement_id  = "AllowVoicesInvoke"
-#   action        = "lambda:InvokeFunction"
-#   function_name = aws_lambda_function.voices.function_name
-#   principal     = "apigateway.amazonaws.com"
-#   source_arn    = "${aws_api_gateway_rest_api.polly_api.execution_arn}/*/*"
-# }
+resource "aws_lambda_permission" "api_gateway_new_post" {
+  statement_id  = "AllowNewPostInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.new_posts_lambda.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.polly_api.execution_arn}/*/*"
+}
+
+resource "aws_lambda_permission" "api_gateway_get_post" {
+  statement_id  = "AllowGetPostInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.get_post.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.polly_api.execution_arn}/*/*"
+}
+
+resource "aws_lambda_permission" "api_gateway_voices" {
+  statement_id  = "AllowVoicesInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.voices.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.polly_api.execution_arn}/*/*"
+}
 
 # ---------------------------
 # CloudWatch Log Groups for Lambdas
