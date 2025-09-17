@@ -31,12 +31,12 @@ output "s3_website_url" {
   value       = "http://${aws_s3_bucket.website.bucket}.s3-website-${var.region}.amazonaws.com"
 }
 
-output "custom_domain_url" {
-  description = "Custom domain URL"
-  value       = "https://voicebox.rafftec.click"
-}
+# output "custom_domain_url" {
+#   description = "Custom domain URL"
+#   value       = "https://voicebox.rafftec.click"
+# }
 
-output "route53_zone_id" {
-  description = "Route 53 hosted zone ID"
-  value       = aws_route53_zone.main.zone_id
-}
+# output "route53_zone_id" {
+#   description = "Route 53 hosted zone ID"
+#   value       = aws_route53_zone.main.zone_id
+# }
