@@ -1,6 +1,7 @@
 resource "aws_iam_policy" "iam_policy" {
   name       = "lambda_functions"
   depends_on = [aws_dynamodb_table.table1, aws_s3_bucket.my_bucket, aws_sns_topic.sns_topic]
+
   policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
@@ -49,8 +50,10 @@ resource "aws_iam_policy" "iam_policy" {
     ]
   })
 }
+
 resource "aws_iam_role" "iam_role" {
   name = "lambda_functions_role"
+
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
@@ -64,7 +67,15 @@ resource "aws_iam_role" "iam_role" {
     ]
   })
 }
+
+# Attach custom inline policy
 resource "aws_iam_role_policy_attachment" "policy_attachment" {
   role       = aws_iam_role.iam_role.name
   policy_arn = aws_iam_policy.iam_policy.arn
+}
+
+# Attach AWS managed logging policy (fix)
+resource "aws_iam_role_policy_attachment" "basic_logs" {
+  role       = aws_iam_role.iam_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }

@@ -1,3 +1,12 @@
+# ---------------------------
+# New Post Lambda
+# ---------------------------
+data "archive_file" "lambda_new_post" {
+  type        = "zip"
+  source_file = "${path.root}/../lambda/handler.py"
+  output_path = "${path.root}/../deploy/handler.zip"
+}
+
 resource "aws_lambda_function" "new_posts_lambda" {
   function_name = "PostReader_NewPost"
   runtime       = "python3.13"
@@ -6,8 +15,8 @@ resource "aws_lambda_function" "new_posts_lambda" {
   timeout       = var.timeout_lambda
 
   handler          = "handler.lambda_handler"
-  filename         = data.archive_file.lambda_zip.output_path
-  source_code_hash = data.archive_file.lambda_zip.output_base64sha256
+  filename         = data.archive_file.lambda_new_post.output_path
+  source_code_hash = data.archive_file.lambda_new_post.output_base64sha256
 
   environment {
     variables = {
@@ -16,23 +25,26 @@ resource "aws_lambda_function" "new_posts_lambda" {
     }
   }
 }
-data "archive_file" "lambda_zip" {
-  type        = "zip"
-  source_file = var.source_file_lambda_new_post
-  output_path = "${path.module}/lambda_function_new_post.zip"
-}
 
+# ---------------------------
+# Convert To Audio Lambda
+# ---------------------------
+data "archive_file" "lambda_convert_to_audio" {
+  type        = "zip"
+  source_file = "${path.root}/../lambda/convert_to_audio.py"
+  output_path = "${path.root}/../deploy/convert_to_audio.zip"
+}
 
 resource "aws_lambda_function" "convert_to_audio" {
   function_name = "PostReader_ConvertToAudio"
   runtime       = "python3.13"
   role          = aws_iam_role.iam_role.arn
-  handler       = "convert_to_audio.lambda_handler"
   memory_size   = var.memory_size_lambda
   timeout       = var.timeout_lambda
 
-  filename         = data.archive_file.lambda_convert_to_audio_zip.output_path
-  source_code_hash = data.archive_file.lambda_convert_to_audio_zip.output_base64sha256
+  handler          = "convert_to_audio.lambda_handler"
+  filename         = data.archive_file.lambda_convert_to_audio.output_path
+  source_code_hash = data.archive_file.lambda_convert_to_audio.output_base64sha256
 
   environment {
     variables = {
@@ -41,33 +53,26 @@ resource "aws_lambda_function" "convert_to_audio" {
     }
   }
 }
-resource "aws_lambda_permission" "allow_sns_to_invoke_lambda" {
-  statement_id  = "AllowExecutionFromSNS"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.convert_to_audio.function_name
-  principal     = "sns.amazonaws.com"
-  source_arn    = aws_sns_topic.sns_topic.arn
 
-  depends_on = [aws_sns_topic_subscription.sns_topic_subscription]
-
-}
-data "archive_file" "lambda_convert_to_audio_zip" {
+# ---------------------------
+# Get Post Lambda
+# ---------------------------
+data "archive_file" "lambda_get_post" {
   type        = "zip"
-  source_file = var.source_file_lambda_convert_to_audio
-  output_path = "${path.module}/lambda_function_convert_to_audio.zip"
+  source_file = "${path.root}/../lambda/get_post.py"
+  output_path = "${path.root}/../deploy/get_post.zip"
 }
-
 
 resource "aws_lambda_function" "get_post" {
   function_name = "PostReader_GetPost"
   runtime       = "python3.13"
   role          = aws_iam_role.iam_role.arn
-  handler       = "get_post.lambda_handler"
   memory_size   = var.memory_size_lambda
   timeout       = var.timeout_lambda
 
-  filename         = data.archive_file.get_post_zip.output_path
-  source_code_hash = data.archive_file.get_post_zip.output_base64sha256
+  handler          = "get_post.lambda_handler"
+  filename         = data.archive_file.lambda_get_post.output_path
+  source_code_hash = data.archive_file.lambda_get_post.output_base64sha256
 
   environment {
     variables = {
@@ -76,24 +81,41 @@ resource "aws_lambda_function" "get_post" {
   }
 }
 
-data "archive_file" "get_post_zip" {
-  type        = "zip"
-  source_file = var.source_file_lambda_get_post
-  output_path = "${path.module}/get_post.zip"
+# ---------------------------
+# CloudWatch Log Groups for Lambdas
+# ---------------------------
+resource "aws_cloudwatch_log_group" "new_post" {
+  name              = "/aws/lambda/PostReader_NewPost"
+  retention_in_days = 7
+
+  lifecycle {
+    prevent_destroy = false
+    ignore_changes  = [name]
+  }
+
+  depends_on = [aws_lambda_function.new_posts_lambda]
 }
 
-resource "aws_lambda_permission" "api_gateway_new_post" {
-  statement_id  = "AllowNewPostInvoke"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.new_posts_lambda.function_name
-  principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_api_gateway_rest_api.polly_api.execution_arn}/*/*"
+resource "aws_cloudwatch_log_group" "convert_to_audio" {
+  name              = "/aws/lambda/PostReader_ConvertToAudio"
+  retention_in_days = 7
+
+  lifecycle {
+    prevent_destroy = false
+    ignore_changes  = [name]
+  }
+
+  depends_on = [aws_lambda_function.convert_to_audio]
 }
 
-resource "aws_lambda_permission" "api_gateway_get_post" {
-  statement_id  = "AllowGetPostInvoke"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.get_post.function_name
-  principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_api_gateway_rest_api.polly_api.execution_arn}/*/*"
+resource "aws_cloudwatch_log_group" "get_post" {
+  name              = "/aws/lambda/PostReader_GetPost"
+  retention_in_days = 7
+
+  lifecycle {
+    prevent_destroy = false
+    ignore_changes  = [name]
+  }
+
+  depends_on = [aws_lambda_function.get_post]
 }
