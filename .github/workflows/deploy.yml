@@ -162,9 +162,16 @@ jobs:
           USER_POOL_ID=$(terraform output -raw cognito_user_pool_id)
           CLIENT_ID=$(terraform output -raw cognito_client_id)
           
-          # Update auth.js with actual Cognito values
+          # Update auth.js with actual Cognito values using Python
           aws s3 cp s3://polly-app-static-website-20251809/auth.js ./temp-auth.js
-          sed -i "s|YOUR_USER_POOL_ID|$USER_POOL_ID|g" ./temp-auth.js
-          sed -i "s|YOUR_CLIENT_ID|$CLIENT_ID|g" ./temp-auth.js
+          python3 -c "
+import sys
+with open('./temp-auth.js', 'r') as f:
+    content = f.read()
+content = content.replace('YOUR_USER_POOL_ID', '$USER_POOL_ID')
+content = content.replace('YOUR_CLIENT_ID', '$CLIENT_ID')
+with open('./temp-auth.js', 'w') as f:
+    f.write(content)
+"
           aws s3 cp ./temp-auth.js s3://polly-app-static-website-20251809/auth.js
         working-directory: ./terraform
