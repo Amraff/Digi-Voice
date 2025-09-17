@@ -49,7 +49,7 @@ def lambda_handler(event, context):
                 stream,
                 bucket,
                 s3_key,
-                ExtraArgs={"ContentType": "audio/mpeg", "ACL": "public-read"}
+                ExtraArgs={"ContentType": "audio/mpeg"}
             )
 
         # Public S3 URL
