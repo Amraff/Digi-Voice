@@ -78,12 +78,11 @@ resource "aws_cloudfront_distribution" "voicebox_cdn" {
   }
 
   viewer_certificate {
-    acm_certificate_arn      = aws_acm_certificate_validation.voicebox_cert.certificate_arn
-    ssl_support_method       = "sni-only"
-    minimum_protocol_version = "TLSv1.2_2021"
+    cloudfront_default_certificate = true
   }
 
-  aliases = ["voicebox.rafftec.click"]
+  # Temporarily disabled custom domain until SSL cert is ready
+  # aliases = ["voicebox.rafftec.click"]
 
   tags = {
     Name = "VoiceBox CDN"

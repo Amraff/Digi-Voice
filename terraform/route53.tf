@@ -49,16 +49,16 @@ resource "aws_acm_certificate_validation" "voicebox_cert" {
 }
 
 # ---------------------------
-# Route 53 Record for CloudFront
+# Route 53 Record for CloudFront (temporarily disabled)
 # ---------------------------
-resource "aws_route53_record" "voicebox" {
-  zone_id = aws_route53_zone.main.zone_id
-  name    = "voicebox.rafftec.click"
-  type    = "A"
+# resource "aws_route53_record" "voicebox" {
+#   zone_id = aws_route53_zone.main.zone_id
+#   name    = "voicebox.rafftec.click"
+#   type    = "A"
 
-  alias {
-    name                   = aws_cloudfront_distribution.voicebox_cdn.domain_name
-    zone_id                = aws_cloudfront_distribution.voicebox_cdn.hosted_zone_id
-    evaluate_target_health = false
-  }
-}
+#   alias {
+#     name                   = aws_cloudfront_distribution.voicebox_cdn.domain_name
+#     zone_id                = aws_cloudfront_distribution.voicebox_cdn.hosted_zone_id
+#     evaluate_target_health = false
+#   }
+# }
