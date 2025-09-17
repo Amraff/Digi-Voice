@@ -31,17 +31,42 @@ jobs:
       # -----------------------------
       - name: Package Lambda functions
         run: |
-          mkdir -p terraform/deploy
+          mkdir -p deploy
+          
+          # Package each Lambda function properly
           cd lambda
-          zip -r ../terraform/deploy/handler.zip handler.py
-          zip -r ../terraform/deploy/get_post.zip get_post.py
-          zip -r ../terraform/deploy/convert_to_audio.zip convert_to_audio.py
-          zip -r ../terraform/deploy/voices.zip voices.py
-          cd ..
+          
+          # Handler Lambda
+          mkdir -p ../deploy/handler
+          cp handler.py ../deploy/handler/
+          cd ../deploy/handler
+          zip -r ../handler.zip .
+          cd ../../lambda
+          
+          # Get Post Lambda
+          mkdir -p ../deploy/get_post
+          cp get_post.py ../deploy/get_post/
+          cd ../deploy/get_post
+          zip -r ../get_post.zip .
+          cd ../../lambda
+          
+          # Convert to Audio Lambda
+          mkdir -p ../deploy/convert_to_audio
+          cp convert_to_audio.py ../deploy/convert_to_audio/
+          cd ../deploy/convert_to_audio
+          zip -r ../convert_to_audio.zip .
+          cd ../../lambda
+          
+          # Voices Lambda
+          mkdir -p ../deploy/voices
+          cp voices.py ../deploy/voices/
+          cd ../deploy/voices
+          zip -r ../voices.zip .
+          cd ../..
 
       - name: Upload Lambda Zips to S3
         run: |
-          aws s3 sync terraform/deploy s3://mp3-pollybucket-app-20251809/deploy \
+          aws s3 sync deploy s3://mp3-pollybucket-app-20251809/deploy \
             --exact-timestamps \
             --cache-control "no-cache, no-store, must-revalidate" \
             --expires 0

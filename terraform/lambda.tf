@@ -1,12 +1,6 @@
 # ---------------------------
 # New Post Lambda
 # ---------------------------
-data "archive_file" "lambda_new_post" {
-  type        = "zip"
-  source_file = "${path.root}/../lambda/handler.py"
-  output_path = "${path.root}/../deploy/handler.zip"
-}
-
 resource "aws_lambda_function" "new_posts_lambda" {
   function_name = "PostReader_NewPost"
   runtime       = "python3.12"
@@ -14,9 +8,9 @@ resource "aws_lambda_function" "new_posts_lambda" {
   memory_size   = var.memory_size_lambda
   timeout       = var.timeout_lambda
 
-  handler          = "handler.lambda_handler"
-  filename         = data.archive_file.lambda_new_post.output_path
-  source_code_hash = data.archive_file.lambda_new_post.output_base64sha256
+  handler = "handler.lambda_handler"
+  s3_bucket = var.bucket_name
+  s3_key    = "deploy/handler.zip"
 
   environment {
     variables = {
@@ -31,12 +25,6 @@ resource "aws_lambda_function" "new_posts_lambda" {
 # ---------------------------
 # Convert To Audio Lambda
 # ---------------------------
-data "archive_file" "lambda_convert_to_audio" {
-  type        = "zip"
-  source_file = "${path.root}/../lambda/convert_to_audio.py"
-  output_path = "${path.root}/../deploy/convert_to_audio.zip"
-}
-
 resource "aws_lambda_function" "convert_to_audio" {
   function_name = "PostReader_ConvertToAudio"
   runtime       = "python3.12"
@@ -44,9 +32,9 @@ resource "aws_lambda_function" "convert_to_audio" {
   memory_size   = var.memory_size_lambda
   timeout       = var.timeout_lambda
 
-  handler          = "convert_to_audio.lambda_handler"
-  filename         = data.archive_file.lambda_convert_to_audio.output_path
-  source_code_hash = data.archive_file.lambda_convert_to_audio.output_base64sha256
+  handler = "convert_to_audio.lambda_handler"
+  s3_bucket = var.bucket_name
+  s3_key    = "deploy/convert_to_audio.zip"
 
   environment {
     variables = {
@@ -59,12 +47,6 @@ resource "aws_lambda_function" "convert_to_audio" {
 # ---------------------------
 # Get Post Lambda
 # ---------------------------
-data "archive_file" "lambda_get_post" {
-  type        = "zip"
-  source_file = "${path.root}/../lambda/get_post.py"
-  output_path = "${path.root}/../deploy/get_post.zip"
-}
-
 resource "aws_lambda_function" "get_post" {
   function_name = "PostReader_GetPost"
   runtime       = "python3.12"
@@ -72,9 +54,9 @@ resource "aws_lambda_function" "get_post" {
   memory_size   = var.memory_size_lambda
   timeout       = var.timeout_lambda
 
-  handler          = "get_post.lambda_handler"
-  filename         = data.archive_file.lambda_get_post.output_path
-  source_code_hash = data.archive_file.lambda_get_post.output_base64sha256
+  handler = "get_post.lambda_handler"
+  s3_bucket = var.bucket_name
+  s3_key    = "deploy/get_post.zip"
 
   environment {
     variables = {
@@ -86,12 +68,6 @@ resource "aws_lambda_function" "get_post" {
 # ---------------------------
 # Voices Lambda
 # ---------------------------
-data "archive_file" "lambda_voices" {
-  type        = "zip"
-  source_file = "${path.root}/../lambda/voices.py"
-  output_path = "${path.root}/../deploy/voices.zip"
-}
-
 resource "aws_lambda_function" "voices" {
   function_name = "PostReader_Voices"
   runtime       = "python3.12"
@@ -99,9 +75,9 @@ resource "aws_lambda_function" "voices" {
   memory_size   = var.memory_size_lambda
   timeout       = var.timeout_lambda
 
-  handler          = "voices.lambda_handler"
-  filename         = data.archive_file.lambda_voices.output_path
-  source_code_hash = data.archive_file.lambda_voices.output_base64sha256
+  handler = "voices.lambda_handler"
+  s3_bucket = var.bucket_name
+  s3_key    = "deploy/voices.zip"
 }
 
 resource "aws_lambda_permission" "api_gateway_voices" {
