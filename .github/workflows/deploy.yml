@@ -94,6 +94,12 @@ jobs:
           SNS_TOPIC_ARN=$(aws sns list-topics --query 'Topics[?contains(TopicArn, `polly-app-topic`)].TopicArn' --output text)
           if [ ! -z "$SNS_TOPIC_ARN" ]; then terraform import aws_sns_topic.sns_topic $SNS_TOPIC_ARN || true; fi
           
+          # Import CloudWatch Log Groups
+          terraform import aws_cloudwatch_log_group.new_post /aws/lambda/PostReader_NewPost || true
+          terraform import aws_cloudwatch_log_group.convert_to_audio /aws/lambda/PostReader_ConvertToAudio || true
+          terraform import aws_cloudwatch_log_group.get_post /aws/lambda/PostReader_GetPost || true
+          terraform import aws_cloudwatch_log_group.voices /aws/lambda/PostReader_Voices || true
+          
           # Skip Lambda permissions as they're difficult to import and will be recreated
 
       - name: Terraform Plan
