@@ -120,6 +120,18 @@ jobs:
             terraform import aws_api_gateway_authorizer.cognito_authorizer $API_ID/$AUTHORIZER_ID || true
           fi
           
+          # Import API Gateway methods for voices endpoint
+          if [ ! -z "$VOICES_RESOURCE_ID" ] && [ "$VOICES_RESOURCE_ID" != "None" ]; then
+            terraform import aws_api_gateway_method.voices_method $API_ID/$VOICES_RESOURCE_ID/GET || true
+            terraform import aws_api_gateway_method.options_voices $API_ID/$VOICES_RESOURCE_ID/OPTIONS || true
+            terraform import aws_api_gateway_integration.voices_lambda $API_ID/$VOICES_RESOURCE_ID/GET || true
+            terraform import aws_api_gateway_integration.options_voices_integration $API_ID/$VOICES_RESOURCE_ID/OPTIONS || true
+            terraform import aws_api_gateway_method_response.voices_response $API_ID/$VOICES_RESOURCE_ID/GET/200 || true
+            terraform import aws_api_gateway_method_response.options_voices_response $API_ID/$VOICES_RESOURCE_ID/OPTIONS/200 || true
+            terraform import aws_api_gateway_integration_response.voices_integration_response $API_ID/$VOICES_RESOURCE_ID/GET/200 || true
+            terraform import aws_api_gateway_integration_response.options_voices_integration_response $API_ID/$VOICES_RESOURCE_ID/OPTIONS/200 || true
+          fi
+          
           # Import Lambda permissions if they exist
           terraform import aws_lambda_permission.api_gateway_new_post PostReader_NewPost/AllowNewPostInvoke || true
           terraform import aws_lambda_permission.api_gateway_get_post PostReader_GetPost/AllowGetPostInvoke || true
