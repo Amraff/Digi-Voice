@@ -63,7 +63,6 @@ resource "aws_lambda_permission" "api_gateway_new_post" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.new_posts_lambda.function_name
   principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_api_gateway_rest_api.polly_api.execution_arn}/*/POST/new_post"
 }
 
 resource "aws_lambda_permission" "api_gateway_get_post" {
@@ -71,7 +70,6 @@ resource "aws_lambda_permission" "api_gateway_get_post" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.get_post.function_name
   principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_api_gateway_rest_api.polly_api.execution_arn}/*/GET/get-post"
 }
 
 resource "aws_lambda_permission" "api_gateway_voices" {
@@ -79,7 +77,6 @@ resource "aws_lambda_permission" "api_gateway_voices" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.voices.function_name
   principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_api_gateway_rest_api.polly_api.execution_arn}/*/GET/voices"
 }
 
 # ---------------------------
