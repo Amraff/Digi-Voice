@@ -2,8 +2,8 @@
 // Cognito Authentication
 // ---------------------------
 const COGNITO_CONFIG = {
-    userPoolId: 'YOUR_USER_POOL_ID', // Will be replaced after deployment
-    clientId: 'YOUR_CLIENT_ID',       // Will be replaced after deployment
+    userPoolId: 'us-east-1_t3mevYpHr', // Latest User Pool
+    clientId: '4qsdomknat4s4sb3u41mf6ult3', // Replace with actual Client ID from Cognito console
     region: 'us-east-1'
 };
 
