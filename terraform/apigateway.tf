@@ -19,7 +19,8 @@ resource "aws_api_gateway_method" "post_new" {
   rest_api_id   = aws_api_gateway_rest_api.polly_api.id
   resource_id   = aws_api_gateway_resource.new_post.id
   http_method   = "POST"
-  authorization = "NONE"
+  authorization = "COGNITO_USER_POOLS"
+  authorizer_id = aws_api_gateway_authorizer.cognito_authorizer.id
 }
 
 resource "aws_api_gateway_integration" "post_new_lambda" {
@@ -124,7 +125,8 @@ resource "aws_api_gateway_method" "get_post_method" {
   rest_api_id   = aws_api_gateway_rest_api.polly_api.id
   resource_id   = aws_api_gateway_resource.get_post.id
   http_method   = "GET"
-  authorization = "NONE"
+  authorization = "COGNITO_USER_POOLS"
+  authorizer_id = aws_api_gateway_authorizer.cognito_authorizer.id
 }
 
 resource "aws_api_gateway_integration" "get_post_lambda" {

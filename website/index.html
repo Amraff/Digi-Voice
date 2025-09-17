@@ -7,10 +7,41 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header>
-    <h1>🎙️ VoiceBox</h1>
-    <p>Convert your text into lifelike speech using Amazon Polly</p>
-  </header>
+  <!-- Authentication Section -->
+  <div id="authSection" style="display:none;">
+    <div class="auth-container">
+      <h1>🎙️ VoiceBox</h1>
+      <div class="auth-tabs">
+        <button onclick="showSignIn()" class="tab-btn active" id="signinTab">Sign In</button>
+        <button onclick="showSignUp()" class="tab-btn" id="signupTab">Sign Up</button>
+      </div>
+      
+      <div id="signinForm" class="auth-form">
+        <input type="email" id="signinEmail" placeholder="Email" required>
+        <input type="password" id="signinPassword" placeholder="Password" required>
+        <button onclick="signIn()" class="auth-btn">Sign In</button>
+      </div>
+      
+      <div id="signupForm" class="auth-form" style="display:none;">
+        <input type="email" id="signupEmail" placeholder="Email" required>
+        <input type="password" id="signupPassword" placeholder="Password (min 8 chars)" required>
+        <button onclick="signUp()" class="auth-btn">Sign Up</button>
+      </div>
+      
+      <div id="verificationSection" style="display:none;">
+        <input type="text" id="verificationCode" placeholder="Verification Code">
+        <button onclick="confirmSignUp()" class="auth-btn">Verify</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Application -->
+  <div id="appSection" style="display:none;">
+    <header>
+      <h1>🎙️ VoiceBox</h1>
+      <p>Convert your text into lifelike speech using Amazon Polly</p>
+      <button onclick="signOut()" class="signout-btn">Sign Out</button>
+    </header>
 
   <main>
     <section class="card">
@@ -59,13 +90,33 @@
         </tbody>
       </table>
     </section>
-  </main>
+    </main>
 
-  <footer>
-    <p>🚀 Powered by Amazon Polly | Built with ❤️ as VoiceBox</p>
-  </footer>
+    <footer>
+      <p>🚀 Powered by Amazon Polly | Built with ❤️ as VoiceBox</p>
+    </footer>
+  </div>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1.24.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.6/dist/amazon-cognito-identity.min.js"></script>
+  <script src="auth.js"></script>
   <script src="script.js"></script>
+  
+  <script>
+    function showSignIn() {
+      document.getElementById('signinForm').style.display = 'block';
+      document.getElementById('signupForm').style.display = 'none';
+      document.getElementById('signinTab').classList.add('active');
+      document.getElementById('signupTab').classList.remove('active');
+    }
+    
+    function showSignUp() {
+      document.getElementById('signinForm').style.display = 'none';
+      document.getElementById('signupForm').style.display = 'block';
+      document.getElementById('signinTab').classList.remove('active');
+      document.getElementById('signupTab').classList.add('active');
+    }
+  </script>
 </body>
 </html>
