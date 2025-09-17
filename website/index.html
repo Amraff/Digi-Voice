@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>VoiceBox – Text to Speech</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <h1>🎙️ VoiceBox</h1>
+    <p>Convert your text into lifelike speech using Amazon Polly</p>
+  </header>
+
+  <main>
+    <section class="card">
+      <label for="voiceSelected">Choose a Voice</label>
+      <select id="voiceSelected" class="input"></select>
+
+      <label for="postText">Your Text</label>
+      <textarea id="postText" placeholder="Write your text here..."></textarea>
+      <span id="charCounter">Characters: 0</span>
+
+      <div class="actions">
+        <button id="sayButton" class="btn">Convert to Speech</button>
+        <span id="postIDreturned"></span>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>🔍 Retrieve a Post</h2>
+      <div class="row">
+        <input type="text" id="postId" placeholder="Enter Post ID" class="input" />
+        <button id="searchButton" class="btn secondary">Search</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>📑 Posts</h2>
+      <table id="posts">
+        <colgroup>
+          <col style="width:15%">
+          <col style="width:10%">
+          <col style="width:35%">
+          <col style="width:10%">
+          <col style="width:30%">
+        </colgroup>
+        <thead>
+          <tr>
+            <th>Post ID</th>
+            <th>Voice</th>
+            <th>Text</th>
+            <th>Status</th>
+            <th>Playback / Download</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- rows dynamically filled -->
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <footer>
+    <p>🚀 Powered by Amazon Polly | Built with ❤️ as VoiceBox</p>
+  </footer>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="scripts.js"></script>
+</body>
+</html>
