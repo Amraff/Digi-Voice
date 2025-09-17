@@ -45,8 +45,14 @@ def lambda_handler(event, context):
 
         # Upload to S3
         with polly_response["AudioStream"] as stream:
-            s3.upload_fileobj(stream, bucket, s3_key, ExtraArgs={"ContentType": "audio/mpeg", "ACL": "public-read"})
+            s3.upload_fileobj(
+                stream,
+                bucket,
+                s3_key,
+                ExtraArgs={"ContentType": "audio/mpeg", "ACL": "public-read"}
+            )
 
+        # Public S3 URL
         file_url = f"https://{bucket}.s3.amazonaws.com/{s3_key}"
         print(f"Uploaded file to {file_url}")
 
@@ -54,14 +60,8 @@ def lambda_handler(event, context):
         table.update_item(
             Key={"id": record_id},
             UpdateExpression="SET #s = :s, #u = :u",
-            ExpressionAttributeNames={
-                "#s": "status",
-                "#u": "url"
-            },
-            ExpressionAttributeValues={
-                ":s": "COMPLETED",
-                ":u": file_url
-            }
+            ExpressionAttributeNames={"#s": "status", "#u": "url"},
+            ExpressionAttributeValues={":s": "COMPLETED", ":u": file_url}
         )
         print(f"Updated DynamoDB record {record_id} with COMPLETED + URL")
 

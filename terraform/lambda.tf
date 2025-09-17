@@ -82,6 +82,35 @@ resource "aws_lambda_function" "get_post" {
 }
 
 # ---------------------------
+# Voices Lambda
+# ---------------------------
+data "archive_file" "lambda_voices" {
+  type        = "zip"
+  source_file = "${path.root}/../lambda/voices.py"
+  output_path = "${path.root}/../deploy/voices.zip"
+}
+
+resource "aws_lambda_function" "voices" {
+  function_name = "PostReader_Voices"
+  runtime       = "python3.13"
+  role          = aws_iam_role.iam_role.arn
+  memory_size   = var.memory_size_lambda
+  timeout       = var.timeout_lambda
+
+  handler          = "voices.lambda_handler"
+  filename         = data.archive_file.lambda_voices.output_path
+  source_code_hash = data.archive_file.lambda_voices.output_base64sha256
+}
+
+resource "aws_lambda_permission" "api_gateway_voices" {
+  statement_id  = "AllowVoicesInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.voices.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.polly_api.execution_arn}/*/*"
+}
+
+# ---------------------------
 # CloudWatch Log Groups for Lambdas
 # ---------------------------
 resource "aws_cloudwatch_log_group" "new_post" {
@@ -118,4 +147,16 @@ resource "aws_cloudwatch_log_group" "get_post" {
   }
 
   depends_on = [aws_lambda_function.get_post]
+}
+
+resource "aws_cloudwatch_log_group" "voices" {
+  name              = "/aws/lambda/PostReader_Voices"
+  retention_in_days = 7
+
+  lifecycle {
+    prevent_destroy = false
+    ignore_changes  = [name]
+  }
+
+  depends_on = [aws_lambda_function.voices]
 }

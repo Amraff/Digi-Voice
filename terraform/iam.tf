@@ -6,10 +6,11 @@ resource "aws_iam_policy" "iam_policy" {
     Version = "2012-10-17",
     Statement = [
       {
-        Sid    = "Perm1",
+        Sid    = "PollyAndLogs",
         Effect = "Allow",
         Action = [
           "polly:SynthesizeSpeech",
+          "polly:DescribeVoices",      # ✅ Needed for voices.py
           "s3:GetBucketLocation",
           "logs:CreateLogGroup",
           "logs:CreateLogStream",
@@ -18,7 +19,7 @@ resource "aws_iam_policy" "iam_policy" {
         Resource = "*"
       },
       {
-        Sid    = "Perm2",
+        Sid    = "DynamoDB",
         Effect = "Allow",
         Action = [
           "dynamodb:Query",
@@ -30,7 +31,7 @@ resource "aws_iam_policy" "iam_policy" {
         Resource = aws_dynamodb_table.table1.arn
       },
       {
-        Sid    = "Perm3",
+        Sid    = "S3",
         Effect = "Allow",
         Action = [
           "s3:PutObject",
@@ -40,7 +41,7 @@ resource "aws_iam_policy" "iam_policy" {
         Resource = "${aws_s3_bucket.my_bucket.arn}/*"
       },
       {
-        Sid    = "Perm4",
+        Sid    = "SNS",
         Effect = "Allow",
         Action = [
           "sns:Publish"
@@ -74,7 +75,7 @@ resource "aws_iam_role_policy_attachment" "policy_attachment" {
   policy_arn = aws_iam_policy.iam_policy.arn
 }
 
-# Attach AWS managed logging policy (fix)
+# Attach AWS managed logging policy
 resource "aws_iam_role_policy_attachment" "basic_logs" {
   role       = aws_iam_role.iam_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"

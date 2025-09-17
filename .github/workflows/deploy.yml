@@ -27,7 +27,7 @@ jobs:
           aws-region: us-east-1   # change if different
 
       # -----------------------------
-      # 📦 Package & Upload Lambda
+      # 📦 Package & Upload Lambdas
       # -----------------------------
       - name: Package Lambda functions
         run: |
@@ -36,6 +36,7 @@ jobs:
           zip -r ../terraform/deploy/handler.zip handler.py
           zip -r ../terraform/deploy/get_post.zip get_post.py
           zip -r ../terraform/deploy/convert_to_audio.zip convert_to_audio.py
+          zip -r ../terraform/deploy/voices.zip voices.py
           cd ..
 
       - name: Upload Lambda Zips to S3
