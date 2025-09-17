@@ -74,13 +74,14 @@ resource "aws_lambda_permission" "api_gateway_get_post" {
   source_arn    = "${aws_api_gateway_rest_api.polly_api.execution_arn}/*/*"
 }
 
-resource "aws_lambda_permission" "api_gateway_voices" {
-  statement_id  = "AllowVoicesInvoke"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.voices.function_name
-  principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_api_gateway_rest_api.polly_api.execution_arn}/*/*"
-}
+# Temporarily disabled - causing deployment issues
+# resource "aws_lambda_permission" "api_gateway_voices" {
+#   statement_id  = "AllowVoicesInvoke"
+#   action        = "lambda:InvokeFunction"
+#   function_name = aws_lambda_function.voices.function_name
+#   principal     = "apigateway.amazonaws.com"
+#   source_arn    = "${aws_api_gateway_rest_api.polly_api.execution_arn}/*/*"
+# }
 
 # ---------------------------
 # CloudWatch Log Groups for Lambdas
