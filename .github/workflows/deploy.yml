@@ -100,6 +100,9 @@ jobs:
           terraform import aws_cloudwatch_log_group.get_post /aws/lambda/PostReader_GetPost || true
           terraform import aws_cloudwatch_log_group.voices /aws/lambda/PostReader_Voices || true
           
+          # Import API Gateway stage if it exists
+          terraform import aws_api_gateway_stage.prod 528y1o1xm3/prod || true
+          
           # Import Lambda permissions if they exist
           terraform import aws_lambda_permission.api_gateway_new_post PostReader_NewPost/AllowNewPostInvoke || true
           terraform import aws_lambda_permission.api_gateway_get_post PostReader_GetPost/AllowGetPostInvoke || true
