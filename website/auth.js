@@ -141,7 +141,10 @@ function checkAuthStatus() {
     }
 }
 
-// Initialize on page load
+// Initialize on page load - bypass authentication for testing
 $(document).ready(function() {
-    checkAuthStatus();
+    // Temporarily bypass authentication
+    showAppSection();
+    loadVoices();
+    // checkAuthStatus();
 });
