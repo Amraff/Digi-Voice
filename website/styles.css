@@ -1,27 +1,32 @@
-/* General theme */
+/* General theme - Yellow, Brown, White, Black */
 body {
   font-family: "Segoe UI", Roboto, sans-serif;
   margin: 0;
   padding: 0;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  color: #333;
+  background: linear-gradient(135deg, #f4e04d, #d4a574);
+  color: #2c1810;
+  min-height: 100vh;
 }
 
 header {
   text-align: center;
-  padding: 2rem;
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
+  padding: 3rem 2rem;
+  background: linear-gradient(135deg, #8b4513, #654321);
+  color: #fff8dc;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
 }
 
 header h1 {
   margin: 0;
-  font-size: 2.4rem;
+  font-size: 3rem;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+  font-weight: bold;
 }
 
 header p {
-  margin-top: 0.5rem;
-  font-size: 1.2rem;
+  margin-top: 1rem;
+  font-size: 1.3rem;
+  opacity: 0.9;
 }
 
 main {
@@ -31,11 +36,25 @@ main {
 }
 
 .card {
-  background: white;
-  border-radius: 12px;
-  padding: 1.5rem;
+  background: #fff8dc;
+  border-radius: 15px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  border: 2px solid #d4a574;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 35px rgba(0,0,0,0.2);
+}
+
+.card h2 {
+  color: #8b4513;
+  font-size: 1.8rem;
   margin-bottom: 1.5rem;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  text-align: center;
 }
 
 label {
@@ -46,12 +65,20 @@ label {
 
 .input, textarea, select {
   width: 100%;
-  padding: 0.8rem;
-  font-size: 1rem;
-  border-radius: 8px;
-  border: 1px solid #ccc;
+  padding: 1rem;
+  font-size: 1.1rem;
+  border-radius: 10px;
+  border: 2px solid #d4a574;
   outline: none;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
+  background: white;
+  color: #2c1810;
+  transition: border-color 0.3s ease;
+}
+
+.input:focus, textarea:focus, select:focus {
+  border-color: #8b4513;
+  box-shadow: 0 0 10px rgba(139, 69, 19, 0.3);
 }
 
 textarea {
@@ -74,22 +101,34 @@ textarea {
 }
 
 .btn {
-  background: linear-gradient(135deg, #ff8c00, #ff5722);
-  color: white;
-  border: none;
-  padding: 0.8rem 1.4rem;
-  font-size: 1rem;
-  border-radius: 8px;
+  background: linear-gradient(135deg, #f4e04d, #e6cc00);
+  color: #2c1810;
+  border: 2px solid #8b4513;
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border-radius: 25px;
   cursor: pointer;
-  transition: 0.2s ease;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .btn:hover {
-  opacity: 0.9;
+  background: linear-gradient(135deg, #8b4513, #654321);
+  color: #fff8dc;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
 }
 
 .btn.secondary {
-  background: linear-gradient(135deg, #2196f3, #00bcd4);
+  background: linear-gradient(135deg, #d4a574, #b8956a);
+  color: #2c1810;
+}
+
+.btn.secondary:hover {
+  background: linear-gradient(135deg, #2c1810, #000000);
+  color: #f4e04d;
 }
 
 table {
@@ -99,14 +138,26 @@ table {
 }
 
 table th, table td {
-  padding: 0.8rem;
+  padding: 1rem;
   text-align: left;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 2px solid #d4a574;
 }
 
 table th {
-  background: #ff8c00;
-  color: white;
+  background: linear-gradient(135deg, #8b4513, #654321);
+  color: #fff8dc;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+table tr:nth-child(even) {
+  background: rgba(244, 224, 77, 0.1);
+}
+
+table tr:hover {
+  background: rgba(212, 165, 116, 0.2);
+  transition: background 0.3s ease;
 }
 
 audio {
@@ -116,9 +167,11 @@ audio {
 
 footer {
   text-align: center;
-  padding: 1rem;
-  background: rgba(0, 0, 0, 0.2);
-  color: white;
+  padding: 2rem;
+  background: linear-gradient(135deg, #2c1810, #000000);
+  color: #f4e04d;
+  margin-top: 3rem;
+  font-size: 1.1rem;
 }
 
 .badge {
@@ -130,22 +183,38 @@ footer {
 }
 
 .badge.processing {
-  background-color: orange;
+  background: linear-gradient(135deg, #f4e04d, #e6cc00);
+  color: #2c1810;
+  font-weight: bold;
 }
 
 .badge.completed {
-  background-color: green;
+  background: linear-gradient(135deg, #8b4513, #654321);
+  color: #fff8dc;
+  font-weight: bold;
+}
+
+.badge.failed {
+  background: linear-gradient(135deg, #2c1810, #000000);
+  color: #f4e04d;
+  font-weight: bold;
 }
 
 /* Authentication Styles */
 .auth-container {
-  max-width: 400px;
+  max-width: 450px;
   margin: 50px auto;
-  padding: 30px;
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 3rem;
+  background: #fff8dc;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   text-align: center;
+  border: 3px solid #d4a574;
+}
+
+.auth-container h1 {
+  color: #8b4513;
+  margin-bottom: 2rem;
 }
 
 .auth-tabs {
@@ -155,16 +224,19 @@ footer {
 
 .tab-btn {
   flex: 1;
-  padding: 10px;
-  border: none;
-  background: #f0f0f0;
+  padding: 15px;
+  border: 2px solid #d4a574;
+  background: white;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: all 0.3s;
+  font-weight: bold;
+  color: #2c1810;
 }
 
 .tab-btn.active {
-  background: #007bff;
-  color: white;
+  background: #8b4513;
+  color: #fff8dc;
+  border-color: #8b4513;
 }
 
 .auth-form {
@@ -181,34 +253,42 @@ footer {
 }
 
 .auth-btn {
-  padding: 12px;
-  background: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
+  padding: 15px 30px;
+  background: linear-gradient(135deg, #f4e04d, #e6cc00);
+  color: #2c1810;
+  border: 2px solid #8b4513;
+  border-radius: 25px;
   font-size: 16px;
+  font-weight: bold;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: all 0.3s;
+  text-transform: uppercase;
 }
 
 .auth-btn:hover {
-  background: #0056b3;
+  background: linear-gradient(135deg, #8b4513, #654321);
+  color: #fff8dc;
+  transform: translateY(-2px);
 }
 
 .signout-btn {
   position: absolute;
   top: 20px;
   right: 20px;
-  padding: 8px 16px;
-  background: #dc3545;
-  color: white;
-  border: none;
-  border-radius: 5px;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #2c1810, #000000);
+  color: #f4e04d;
+  border: 2px solid #f4e04d;
+  border-radius: 20px;
   cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s;
 }
 
 .signout-btn:hover {
-  background: #c82333;
+  background: #f4e04d;
+  color: #2c1810;
+  transform: translateY(-2px);
 }
 
 header {

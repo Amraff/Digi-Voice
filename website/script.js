@@ -150,6 +150,27 @@ function loadVoices() {
 }
 
 // ---------------------------
+// Test API function
+// ---------------------------
+function testAPI() {
+  console.log('Testing API endpoints...');
+  
+  // Test voices endpoint
+  $.ajax({
+    url: API_BASE_URL + "/voices",
+    type: "GET",
+    success: function(response) {
+      console.log('Voices endpoint working:', response);
+      alert('Voices API: Working ✅');
+    },
+    error: function(xhr) {
+      console.log('Voices endpoint failed:', xhr.status, xhr.statusText);
+      alert('Voices API: Failed ❌ - ' + xhr.status);
+    }
+  });
+}
+
+// ---------------------------
 // Load voices on page ready
 // ---------------------------
 $(document).ready(function () {
