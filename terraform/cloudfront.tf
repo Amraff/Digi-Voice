@@ -13,7 +13,7 @@ resource "aws_cloudfront_distribution" "voicebox_cdn" {
 
   # API Gateway origin for API calls
   origin {
-    domain_name = "${aws_api_gateway_rest_api.polly_api.id}.execute-api.${var.region}.amazonaws.com"
+    domain_name = "${aws_api_gateway_rest_api.voicebox_api.id}.execute-api.${var.region}.amazonaws.com"
     origin_id   = "API-Gateway"
     origin_path = "/prod"
 

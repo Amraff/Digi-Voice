@@ -51,7 +51,7 @@ resource "aws_cognito_user_pool_client" "voicebox_client" {
 # ---------------------------
 resource "aws_api_gateway_authorizer" "cognito_authorizer" {
   name          = "voicebox-authorizer"
-  rest_api_id   = aws_api_gateway_rest_api.polly_api.id
+  rest_api_id   = aws_api_gateway_rest_api.voicebox_api.id
   type          = "COGNITO_USER_POOLS"
   provider_arns = [aws_cognito_user_pool.voicebox_pool.arn]
 }
