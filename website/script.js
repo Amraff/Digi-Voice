@@ -161,15 +161,25 @@ function testAPI() {
     type: "GET",
     success: function(response) {
       console.log('Voices endpoint working:', response);
-      alert('Voices API: Working ✅');
+      
+      // Test new_post endpoint
+      $.ajax({
+        url: API_BASE_URL + "/new_post",
+        type: "POST",
+        data: JSON.stringify({voice: "Matthew", text: "Test message"}),
+        contentType: "application/json; charset=utf-8",
+        success: function(postResponse) {
+          console.log('New post endpoint working:', postResponse);
+          alert('✅ Both APIs working!\n- Voices: ' + response.voices.length + ' voices loaded\n- New Post: Created ID ' + postResponse);
+        },
+        error: function(xhr) {
+          alert('✅ Voices API working (' + response.voices.length + ' voices)\n❌ New Post API failed: ' + xhr.status);
+        }
+      });
     },
     error: function(xhr) {
       console.log('Voices endpoint failed:', xhr.status, xhr.statusText);
-      if (xhr.status === 403) {
-        alert('API Gateway still requires authentication. Please check AWS Console to manually set authorization to NONE for all methods.');
-      } else {
-        alert('Voices API: Failed ❌ - ' + xhr.status);
-      }
+      alert('❌ Voices API failed: ' + xhr.status);
     }
   });
 }
