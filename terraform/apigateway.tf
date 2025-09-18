@@ -335,6 +335,14 @@ resource "aws_api_gateway_deployment" "deploy" {
   ]
 
   rest_api_id = aws_api_gateway_rest_api.polly_api.id
+  
+  triggers = {
+    redeployment = timestamp()
+  }
+  
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_api_gateway_stage" "prod" {
