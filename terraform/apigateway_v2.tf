@@ -86,7 +86,7 @@ resource "aws_api_gateway_stage" "prod_v2" {
 # Lambda Permissions
 # ------------------------------
 resource "aws_lambda_permission" "api_gateway_new_post_v2" {
-  statement_id  = "AllowNewPostInvokeV2"
+  statement_id  = "AllowNewPostInvokeV3"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.new_posts_lambda.function_name
   principal     = "apigateway.amazonaws.com"
@@ -94,7 +94,7 @@ resource "aws_lambda_permission" "api_gateway_new_post_v2" {
 }
 
 resource "aws_lambda_permission" "api_gateway_voices_v2" {
-  statement_id  = "AllowVoicesInvokeV2"
+  statement_id  = "AllowVoicesInvokeV3"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.voices.function_name
   principal     = "apigateway.amazonaws.com"
