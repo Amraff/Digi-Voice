@@ -100,8 +100,8 @@ jobs:
           terraform import aws_cloudwatch_log_group.get_post /aws/lambda/PostReader_GetPost || true
           terraform import aws_cloudwatch_log_group.voices /aws/lambda/PostReader_Voices || true
           
-          # Force replace API Gateway stage
-          terraform state rm aws_api_gateway_stage.prod || true
+          # Import existing API Gateway stage
+          terraform import aws_api_gateway_stage.prod 528y1o1xm3/prod || true
           
           # Import Route 53 hosted zone if it exists
           ZONE_ID=$(aws route53 list-hosted-zones-by-name --dns-name rafftec.click --query 'HostedZones[0].Id' --output text | cut -d'/' -f3)
