@@ -324,8 +324,11 @@ resource "aws_api_gateway_integration_response" "options_voices_integration_resp
 # ------------------------------
 # Deployment & Stage
 # ------------------------------
-resource "aws_api_gateway_deployment" "deploy" {
+resource "aws_api_gateway_deployment" "deploy_v2" {
   depends_on = [
+    aws_api_gateway_method.post_new,
+    aws_api_gateway_method.get_post_method,
+    aws_api_gateway_method.voices_method,
     aws_api_gateway_integration.post_new_lambda,
     aws_api_gateway_integration.get_post_lambda,
     aws_api_gateway_integration.voices_lambda,
@@ -337,7 +340,7 @@ resource "aws_api_gateway_deployment" "deploy" {
   rest_api_id = aws_api_gateway_rest_api.polly_api.id
   
   triggers = {
-    redeployment = timestamp()
+    redeployment = "${timestamp()}-no-auth"
   }
   
   lifecycle {
@@ -346,7 +349,7 @@ resource "aws_api_gateway_deployment" "deploy" {
 }
 
 resource "aws_api_gateway_stage" "prod" {
-  deployment_id = aws_api_gateway_deployment.deploy.id
+  deployment_id = aws_api_gateway_deployment.deploy_v2.id
   rest_api_id   = aws_api_gateway_rest_api.polly_api.id
   stage_name    = "prod"
 }
