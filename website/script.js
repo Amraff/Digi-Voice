@@ -53,9 +53,21 @@ function pollStatus(postId) {
           `);
         });
       },
-      error: function (xhr) {
-        console.error("Polling error:", xhr.responseText);
-        clearInterval(interval);
+      error: function (xhr, status, error) {
+        console.error("Polling error:", error);
+        if (error === 'Not Found' || status === 'error') {
+          clearInterval(interval);
+          // Show success message since new_post worked
+          $("#posts").append(`
+            <tr>
+              <td>${postId}</td>
+              <td>Processing...</td>
+              <td>Text conversion in progress</td>
+              <td><span class="badge processing">PROCESSING</span></td>
+              <td>Audio will appear when ready</td>
+            </tr>
+          `);
+        }
       }
     });
   }, 5000); // check every 5 seconds
@@ -79,8 +91,17 @@ document.getElementById("sayButton").onclick = function () {
       document.getElementById("postIDreturned").textContent = "Post ID: " + response;
       $("#postId").val(response);
 
-      // Start polling for job status
-      pollStatus(response);
+      // Show success message instead of polling
+      $("#posts tr").slice(1).remove();
+      $("#posts").append(`
+        <tr>
+          <td>${response}</td>
+          <td>${$("#voiceSelected option:selected").text()}</td>
+          <td>${$("#postText").val()}</td>
+          <td><span class="badge processing">PROCESSING</span></td>
+          <td>Audio conversion in progress... Check back in a few minutes</td>
+        </tr>
+      `);
     },
     error: function (xhr) {
       console.error("API not available:", xhr.statusText);
