@@ -352,4 +352,9 @@ resource "aws_api_gateway_stage" "prod" {
   deployment_id = aws_api_gateway_deployment.deploy_v2.id
   rest_api_id   = aws_api_gateway_rest_api.polly_api.id
   stage_name    = "prod"
+  
+  variables = {
+    deployed_at = timestamp()
+    auth_mode = "none"
+  }
 }
