@@ -20,9 +20,6 @@ function pollStatus(postId) {
     $.ajax({
       url: API_BASE_URL + "/get-post?postId=" + postId,
       type: "GET",
-      headers: {
-        'Authorization': authToken
-      },
       success: function (response) {
         if (typeof response === "string") {
           response = JSON.parse(response);
@@ -78,9 +75,6 @@ document.getElementById("sayButton").onclick = function () {
     type: "POST",
     data: JSON.stringify(inputData),
     contentType: "application/json; charset=utf-8",
-    headers: {
-      'Authorization': authToken
-    },
     success: function (response) {
       document.getElementById("postIDreturned").textContent = "Post ID: " + response;
       $("#postId").val(response);
