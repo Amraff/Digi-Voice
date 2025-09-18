@@ -83,25 +83,30 @@ document.getElementById("sayButton").onclick = function () {
   };
 
   $.ajax({
-    url: API_BASE_URL + "/new_post",
+    url: API_BASE_URL + "/direct-audio",
     type: "POST",
     data: JSON.stringify(inputData),
     contentType: "application/json; charset=utf-8",
     success: function (response) {
-      document.getElementById("postIDreturned").textContent = "Post ID: " + response;
-      $("#postId").val(response);
-
-      // Show success message instead of polling
-      $("#posts tr").slice(1).remove();
-      $("#posts").append(`
-        <tr>
-          <td>${response}</td>
-          <td>${$("#voiceSelected option:selected").text()}</td>
-          <td>${$("#postText").val()}</td>
-          <td><span class="badge processing">PROCESSING</span></td>
-          <td>Audio conversion in progress... Check back in a few minutes</td>
-        </tr>
-      `);
+      if (typeof response === "string") {
+        response = JSON.parse(response);
+      }
+      
+      document.getElementById("postIDreturned").textContent = "Conversion complete!";
+      
+      // Show audio player immediately
+      document.getElementById("audioSection").style.display = "block";
+      document.getElementById("audioPlayer").innerHTML = `
+        <div style="text-align: center; padding: 20px;">
+          <h3>🎧 Your Audio is Ready!</h3>
+          <audio controls style="width: 100%; margin: 20px 0;">
+            <source src="${response.url}" type="audio/mpeg">
+            Your browser does not support audio playback.
+          </audio>
+          <br>
+          <a href="${response.url}" download class="btn" style="margin-top: 15px;">⬇️ Download MP3</a>
+        </div>
+      `;
     },
     error: function (xhr) {
       console.error("API not available:", xhr.statusText);
@@ -182,6 +187,58 @@ function testAPI() {
       alert('❌ Voices API failed: ' + xhr.status);
     }
   });
+}
+
+// ---------------------------
+// Manual refresh function
+// ---------------------------
+function refreshStatus() {
+  const postId = $("#postId").val() || document.getElementById("postIDreturned").textContent.replace("Post ID: ", "");
+  if (postId && postId !== "Post ID: ") {
+    console.log('Checking status for:', postId);
+    $.ajax({
+      url: API_BASE_URL + "/get-post?postId=" + postId,
+      type: "GET",
+      success: function (response) {
+        console.log('Status check response:', response);
+        if (typeof response === "string") {
+          response = JSON.parse(response);
+        }
+        
+        // Update the table
+        $("#posts tr").slice(1).remove();
+        jQuery.each(response, function (i, data) {
+          let statusBadge = `<span class="badge ${data['status'].toLowerCase()}">${data['status']}</span>`;
+          let player = "";
+          let download = "";
+
+          if (data["url"]) {
+            player = `<audio controls>
+                        <source src="${data["url"]}" type="audio/mpeg">
+                        Your browser does not support audio playback.
+                      </audio>`;
+            download = `<br><a href="${data["url"]}" download style="text-decoration:none;color:orange;">⬇️ Download MP3</a>`;
+          }
+
+          $("#posts").append(`
+            <tr>
+              <td>${data['id']}</td>
+              <td>${data['voice']}</td>
+              <td>${data['text']}</td>
+              <td>${statusBadge}</td>
+              <td>${player}${download}</td>
+            </tr>
+          `);
+        });
+      },
+      error: function (xhr) {
+        console.error("Status check failed:", xhr.responseText);
+        alert("Could not check status: " + xhr.status);
+      }
+    });
+  } else {
+    alert("No post ID found to check");
+  }
 }
 
 // ---------------------------
