@@ -165,7 +165,11 @@ function testAPI() {
     },
     error: function(xhr) {
       console.log('Voices endpoint failed:', xhr.status, xhr.statusText);
-      alert('Voices API: Failed ❌ - ' + xhr.status);
+      if (xhr.status === 403) {
+        alert('API Gateway still requires authentication. Please check AWS Console to manually set authorization to NONE for all methods.');
+      } else {
+        alert('Voices API: Failed ❌ - ' + xhr.status);
+      }
     }
   });
 }

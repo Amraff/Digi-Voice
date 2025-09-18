@@ -6,6 +6,11 @@ output "api_gateway_url" {
   value       = "https://${aws_api_gateway_rest_api.polly_api.id}.execute-api.${var.region}.amazonaws.com/prod"
 }
 
+output "new_api_gateway_url" {
+  description = "New API Gateway URL (No Auth)"
+  value       = "https://${aws_api_gateway_rest_api.voicebox_api.id}.execute-api.${var.region}.amazonaws.com/prod"
+}
+
 output "cloudfront_domain" {
   description = "CloudFront distribution domain"
   value       = aws_cloudfront_distribution.voicebox_cdn.domain_name

@@ -1,9 +1,9 @@
 # ------------------------------
 # REST API
 # ------------------------------
-resource "aws_api_gateway_rest_api" "polly_api" {
-  name        = "Polly API"
-  description = "API for text-to-speech conversion using AWS Polly"
+resource "aws_api_gateway_rest_api" "polly_api_v2" {
+  name        = "VoiceBox API v2"
+  description = "API for text-to-speech conversion using AWS Polly - No Auth"
 }
 
 # ------------------------------
