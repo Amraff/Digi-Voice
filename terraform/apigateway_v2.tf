@@ -12,7 +12,7 @@ resource "aws_api_gateway_rest_api" "voicebox_api" {
 resource "aws_lambda_function" "direct_audio" {
   filename         = "../lambda/direct_audio.zip"
   function_name    = "DirectAudio"
-  role            = aws_iam_role.lambda_execution_role.arn
+  role            = aws_iam_role.iam_role.arn
   handler         = "direct_audio.lambda_handler"
   runtime         = "python3.9"
   timeout         = 30
