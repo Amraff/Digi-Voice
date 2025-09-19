@@ -50,13 +50,7 @@ resource "aws_api_gateway_integration" "direct_audio_lambda" {
   uri                     = aws_lambda_function.direct_audio.invoke_arn
 }
 
-resource "aws_lambda_permission" "api_gateway_direct_audio" {
-  statement_id  = "AllowDirectAudioInvokeVoiceBox"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.direct_audio.function_name
-  principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_api_gateway_rest_api.voicebox_api.execution_arn}/*/*"
-}
+# DirectAudio Lambda permission removed to avoid conflicts
 
 # ------------------------------
 # /new_post
