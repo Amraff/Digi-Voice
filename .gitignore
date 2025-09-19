@@ -36,4 +36,3 @@ override.tf.json
 .terraformrc
 terraform.rc
 README.md
-architecture-diagram.png
