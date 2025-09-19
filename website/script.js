@@ -78,81 +78,85 @@ function pollStatus(postId) {
 // Handle button click to submit new post
 // ---------------------------
 document.getElementById("sayButton").onclick = function () {
-  var inputData = {
-    voice: $("#voiceSelected option:selected").val(),
-    text: $("#postText").val(),
-  };
-
-  $.ajax({
-    url: API_BASE_URL + "/direct-audio",
-    type: "POST",
-    data: JSON.stringify(inputData),
-    contentType: "application/json; charset=utf-8",
-    success: function (response) {
-      if (typeof response === "string") {
-        response = JSON.parse(response);
-      }
-      
-      document.getElementById("postIDreturned").textContent = "Conversion complete!";
-      
-      // Show audio player immediately
+  var text = $("#postText").val();
+  var voiceName = $("#voiceSelected option:selected").val();
+  
+  if (!text.trim()) {
+    alert("Please enter some text to convert to speech.");
+    return;
+  }
+  
+  document.getElementById("postIDreturned").textContent = "Converting to speech...";
+  
+  // Use browser's built-in speech synthesis
+  if ('speechSynthesis' in window) {
+    var utterance = new SpeechSynthesisUtterance(text);
+    
+    // Try to match the selected voice
+    var voices = speechSynthesis.getVoices();
+    var selectedVoice = voices.find(voice => voice.name.includes(voiceName) || voice.lang.includes('en'));
+    if (selectedVoice) {
+      utterance.voice = selectedVoice;
+    }
+    
+    utterance.onstart = function() {
+      document.getElementById("postIDreturned").textContent = "Playing audio...";
       document.getElementById("audioSection").style.display = "block";
       document.getElementById("audioPlayer").innerHTML = `
         <div style="text-align: center; padding: 20px;">
-          <h3>🎧 Your Audio is Ready!</h3>
-          <audio controls style="width: 100%; margin: 20px 0;">
-            <source src="${response.url}" type="audio/mpeg">
-            Your browser does not support audio playback.
-          </audio>
-          <br>
-          <a href="${response.url}" download class="btn" style="margin-top: 15px;">⬇️ Download MP3</a>
+          <h3>🎧 Audio Playing!</h3>
+          <p><strong>Text:</strong> "${text}"</p>
+          <p><strong>Voice:</strong> ${utterance.voice ? utterance.voice.name : 'Default'}</p>
+          <button onclick="speechSynthesis.cancel()" class="btn secondary">Stop Audio</button>
+          <button onclick="speechSynthesis.speak(new SpeechSynthesisUtterance('${text}'))" class="btn">Play Again</button>
         </div>
       `;
-    },
-    error: function (xhr) {
-      console.error("API not available:", xhr.statusText);
-      document.getElementById("postIDreturned").textContent = "API not deployed yet. Please deploy your Terraform infrastructure first.";
-      document.getElementById("postIDreturned").style.color = "orange";
-    },
-  });
+    };
+    
+    utterance.onend = function() {
+      document.getElementById("postIDreturned").textContent = "Audio playback complete!";
+    };
+    
+    speechSynthesis.speak(utterance);
+  } else {
+    document.getElementById("postIDreturned").textContent = "Speech synthesis not supported in this browser.";
+    document.getElementById("postIDreturned").style.color = "red";
+  }
 };
 
 // ---------------------------
 // Fetch voices dynamically
 // ---------------------------
 function loadVoices() {
-  $.ajax({
-    url: API_BASE_URL + "/voices",
-    type: "GET",
-    success: function (response) {
-      if (typeof response === "string") {
-        response = JSON.parse(response);
-      }
-
-      // Clear existing options
-      $("#voiceSelected").empty();
-
-      // Populate dropdown
-      response.voices.forEach(function (voice) {
-        $("#voiceSelected").append(
-          `<option value="${voice.Id}">${voice.Name} (${voice.LanguageName})</option>`
-        );
+  // Use browser's built-in voices
+  function populateVoices() {
+    var voices = speechSynthesis.getVoices();
+    $("#voiceSelected").empty();
+    
+    if (voices.length > 0) {
+      voices.forEach(function(voice) {
+        if (voice.lang.startsWith('en')) { // Only English voices
+          $("#voiceSelected").append(
+            `<option value="${voice.name}">${voice.name} (${voice.lang})</option>`
+          );
+        }
       });
-    },
-    error: function (xhr) {
-      console.error("Error loading voices:", xhr.responseText);
-      
-      // Use fallback voices when API is not available
-      $("#voiceSelected").empty();
+    } else {
+      // Fallback voices
       FALLBACK_VOICES.forEach(function (voice) {
         $("#voiceSelected").append(
           `<option value="${voice.Id}">${voice.Name} (${voice.LanguageName})</option>`
         );
       });
-      
-      console.log("Using fallback voices - API not available");
     }
-  });
+  }
+  
+  // Load voices when available
+  if (speechSynthesis.getVoices().length > 0) {
+    populateVoices();
+  } else {
+    speechSynthesis.onvoiceschanged = populateVoices;
+  }
 }
 
 // ---------------------------
