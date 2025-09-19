@@ -36,23 +36,86 @@ document.getElementById("sayButton").onclick = function () {
       utterance.voice = selectedVoice;
     }
     
+    // Set up audio recording
+    var audioChunks = [];
+    var mediaRecorder;
+    var audioContext;
+    var destination;
+    
     utterance.onstart = function() {
-      document.getElementById("postIDreturned").textContent = "Playing audio...";
+      document.getElementById("postIDreturned").textContent = "Playing and recording audio...";
       document.getElementById("audioSection").style.display = "block";
-      document.getElementById("audioPlayer").innerHTML = `
-        <div style="text-align: center; padding: 20px;">
-          <h3>🎧 Audio Playing!</h3>
-          <p><strong>Text:</strong> "${text}"</p>
-          <p><strong>Voice:</strong> ${utterance.voice ? utterance.voice.name : 'Default'}</p>
-          <p><em>Note: Download not available with browser speech synthesis</em></p>
-          <button onclick="playAgain()" class="btn">Play Again</button>
-          <button onclick="speechSynthesis.cancel()" class="btn secondary" style="margin-left: 10px;">Stop Audio</button>
-        </div>
-      `;
+      
+      // Try to set up audio recording
+      try {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        destination = audioContext.createMediaStreamDestination();
+        mediaRecorder = new MediaRecorder(destination.stream);
+        
+        audioChunks = [];
+        mediaRecorder.ondataavailable = function(event) {
+          audioChunks.push(event.data);
+        };
+        
+        mediaRecorder.onstop = function() {
+          var audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+          var audioUrl = URL.createObjectURL(audioBlob);
+          
+          document.getElementById("audioPlayer").innerHTML = `
+            <div style="text-align: center; padding: 20px;">
+              <h3>🎧 Audio Ready!</h3>
+              <p><strong>Text:</strong> "${text}"</p>
+              <p><strong>Voice:</strong> ${utterance.voice ? utterance.voice.name : 'Default'}</p>
+              <audio controls style="width: 100%; margin: 15px 0;">
+                <source src="${audioUrl}" type="audio/wav">
+              </audio>
+              <br>
+              <button onclick="playAgain()" class="btn">Play Again</button>
+              <a href="${audioUrl}" download="voicebox-audio.wav" class="btn" style="margin-left: 10px;">⬇️ Download Audio</a>
+              <button onclick="speechSynthesis.cancel()" class="btn secondary" style="margin-left: 10px;">Stop</button>
+            </div>
+          `;
+        };
+        
+        mediaRecorder.start();
+        
+        document.getElementById("audioPlayer").innerHTML = `
+          <div style="text-align: center; padding: 20px;">
+            <h3>🎧 Recording Audio...</h3>
+            <p><strong>Text:</strong> "${text}"</p>
+            <p><strong>Voice:</strong> ${utterance.voice ? utterance.voice.name : 'Default'}</p>
+            <p>🔴 Recording in progress...</p>
+            <button onclick="speechSynthesis.cancel()" class="btn secondary">Stop Audio</button>
+          </div>
+        `;
+        
+      } catch (error) {
+        // Fallback without recording
+        document.getElementById("audioPlayer").innerHTML = `
+          <div style="text-align: center; padding: 20px;">
+            <h3>🎧 Audio Playing!</h3>
+            <p><strong>Text:</strong> "${text}"</p>
+            <p><strong>Voice:</strong> ${utterance.voice ? utterance.voice.name : 'Default'}</p>
+            <p><em>Note: Download not available - browser limitation</em></p>
+            <button onclick="playAgain()" class="btn">Play Again</button>
+            <button onclick="speechSynthesis.cancel()" class="btn secondary" style="margin-left: 10px;">Stop Audio</button>
+          </div>
+        `;
+      }
     };
     
     utterance.onend = function() {
       document.getElementById("postIDreturned").textContent = "Audio playback complete!";
+      
+      // Stop recording when speech ends
+      if (mediaRecorder && mediaRecorder.state === 'recording') {
+        setTimeout(function() {
+          mediaRecorder.stop();
+          if (audioContext) {
+            audioContext.close();
+          }
+        }, 500); // Small delay to capture the end
+      }
     };
     
     speechSynthesis.speak(utterance);
