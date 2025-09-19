@@ -99,22 +99,79 @@ document.getElementById("sayButton").onclick = function () {
       utterance.voice = selectedVoice;
     }
     
+    // Create audio recording functionality
+    var audioChunks = [];
+    var mediaRecorder;
+    
+    // Start recording when speech starts
     utterance.onstart = function() {
-      document.getElementById("postIDreturned").textContent = "Playing audio...";
+      document.getElementById("postIDreturned").textContent = "Playing and recording audio...";
       document.getElementById("audioSection").style.display = "block";
-      document.getElementById("audioPlayer").innerHTML = `
-        <div style="text-align: center; padding: 20px;">
-          <h3>🎧 Audio Playing!</h3>
-          <p><strong>Text:</strong> "${text}"</p>
-          <p><strong>Voice:</strong> ${utterance.voice ? utterance.voice.name : 'Default'}</p>
-          <button onclick="speechSynthesis.cancel()" class="btn secondary">Stop Audio</button>
-          <button onclick="speechSynthesis.speak(new SpeechSynthesisUtterance('${text}'))" class="btn">Play Again</button>
-        </div>
-      `;
+      
+      // Start recording system audio (if supported)
+      if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
+        navigator.mediaDevices.getDisplayMedia({ audio: true, video: false })
+          .then(function(stream) {
+            mediaRecorder = new MediaRecorder(stream);
+            audioChunks = [];
+            
+            mediaRecorder.ondataavailable = function(event) {
+              audioChunks.push(event.data);
+            };
+            
+            mediaRecorder.onstop = function() {
+              var audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+              var audioUrl = URL.createObjectURL(audioBlob);
+              
+              document.getElementById("audioPlayer").innerHTML = `
+                <div style="text-align: center; padding: 20px;">
+                  <h3>🎧 Audio Ready!</h3>
+                  <p><strong>Text:</strong> "${text}"</p>
+                  <p><strong>Voice:</strong> ${utterance.voice ? utterance.voice.name : 'Default'}</p>
+                  <audio controls style="width: 100%; margin: 15px 0;">
+                    <source src="${audioUrl}" type="audio/wav">
+                  </audio>
+                  <br>
+                  <button onclick="speechSynthesis.speak(new SpeechSynthesisUtterance('${text}'))" class="btn">Play Again</button>
+                  <a href="${audioUrl}" download="voicebox-audio.wav" class="btn" style="margin-left: 10px;">⬇️ Download Audio</a>
+                  <button onclick="speechSynthesis.cancel()" class="btn secondary" style="margin-left: 10px;">Stop</button>
+                </div>
+              `;
+            };
+            
+            mediaRecorder.start();
+          })
+          .catch(function() {
+            // Fallback without recording
+            showBasicPlayer();
+          });
+      } else {
+        showBasicPlayer();
+      }
+      
+      function showBasicPlayer() {
+        document.getElementById("audioPlayer").innerHTML = `
+          <div style="text-align: center; padding: 20px;">
+            <h3>🎧 Audio Playing!</h3>
+            <p><strong>Text:</strong> "${text}"</p>
+            <p><strong>Voice:</strong> ${utterance.voice ? utterance.voice.name : 'Default'}</p>
+            <p><em>Note: Download not available - browser limitation</em></p>
+            <button onclick="speechSynthesis.speak(new SpeechSynthesisUtterance('${text}'))" class="btn">Play Again</button>
+            <button onclick="speechSynthesis.cancel()" class="btn secondary" style="margin-left: 10px;">Stop Audio</button>
+          </div>
+        `;
+      }
     };
     
     utterance.onend = function() {
       document.getElementById("postIDreturned").textContent = "Audio playback complete!";
+      
+      // Stop recording when speech ends
+      if (mediaRecorder && mediaRecorder.state === 'recording') {
+        setTimeout(function() {
+          mediaRecorder.stop();
+        }, 500); // Small delay to capture the end
+      }
     };
     
     speechSynthesis.speak(utterance);
@@ -134,12 +191,25 @@ function loadVoices() {
     $("#voiceSelected").empty();
     
     if (voices.length > 0) {
+      // Group voices by language
+      var languageGroups = {};
       voices.forEach(function(voice) {
-        if (voice.lang.startsWith('en')) { // Only English voices
-          $("#voiceSelected").append(
-            `<option value="${voice.name}">${voice.name} (${voice.lang})</option>`
-          );
+        var langName = voice.lang;
+        if (!languageGroups[langName]) {
+          languageGroups[langName] = [];
         }
+        languageGroups[langName].push(voice);
+      });
+      
+      // Add voices grouped by language
+      Object.keys(languageGroups).sort().forEach(function(lang) {
+        var optgroup = $(`<optgroup label="${getLanguageName(lang)}"></optgroup>`);
+        languageGroups[lang].forEach(function(voice) {
+          optgroup.append(
+            `<option value="${voice.name}">${voice.name}</option>`
+          );
+        });
+        $("#voiceSelected").append(optgroup);
       });
     } else {
       // Fallback voices
@@ -157,6 +227,34 @@ function loadVoices() {
   } else {
     speechSynthesis.onvoiceschanged = populateVoices;
   }
+}
+
+// Helper function to get readable language names
+function getLanguageName(langCode) {
+  var languages = {
+    'en-US': 'English (US)',
+    'en-GB': 'English (UK)',
+    'en-AU': 'English (Australia)',
+    'es-ES': 'Spanish (Spain)',
+    'es-MX': 'Spanish (Mexico)',
+    'fr-FR': 'French (France)',
+    'de-DE': 'German (Germany)',
+    'it-IT': 'Italian (Italy)',
+    'pt-BR': 'Portuguese (Brazil)',
+    'ja-JP': 'Japanese (Japan)',
+    'ko-KR': 'Korean (Korea)',
+    'zh-CN': 'Chinese (Simplified)',
+    'zh-TW': 'Chinese (Traditional)',
+    'ru-RU': 'Russian (Russia)',
+    'ar-SA': 'Arabic (Saudi Arabia)',
+    'hi-IN': 'Hindi (India)',
+    'nl-NL': 'Dutch (Netherlands)',
+    'sv-SE': 'Swedish (Sweden)',
+    'da-DK': 'Danish (Denmark)',
+    'no-NO': 'Norwegian (Norway)',
+    'fi-FI': 'Finnish (Finland)'
+  };
+  return languages[langCode] || langCode;
 }
 
 // ---------------------------
@@ -249,6 +347,9 @@ function refreshStatus() {
 // ---------------------------
 // Load voices on page ready
 // ---------------------------
+$(document).ready(function () {
+  loadVoices();
+});-----
 $(document).ready(function () {
   loadVoices();
 });
