@@ -139,6 +139,9 @@ jobs:
             terraform import aws_api_gateway_integration_response.options_voices_integration_response $API_ID/$VOICES_RESOURCE_ID/OPTIONS/200 || true
           fi
           
+          # Import DirectAudio Lambda if it exists
+          terraform import aws_lambda_function.direct_audio DirectAudio || true
+          
           # Import Lambda permissions if they exist
           terraform import aws_lambda_permission.api_gateway_new_post PostReader_NewPost/AllowNewPostInvoke || true
           terraform import aws_lambda_permission.api_gateway_get_post PostReader_GetPost/AllowGetPostInvoke || true

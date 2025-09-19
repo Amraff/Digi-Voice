@@ -164,7 +164,7 @@ resource "aws_api_gateway_stage" "prod_v2" {
 # Lambda Permissions
 # ------------------------------
 resource "aws_lambda_permission" "api_gateway_new_post_v2" {
-  statement_id  = "AllowNewPostInvokeV4"
+  statement_id  = "AllowNewPostInvokeVoiceBox"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.new_posts_lambda.function_name
   principal     = "apigateway.amazonaws.com"
@@ -172,7 +172,7 @@ resource "aws_lambda_permission" "api_gateway_new_post_v2" {
 }
 
 resource "aws_lambda_permission" "api_gateway_voices_v2" {
-  statement_id  = "AllowVoicesInvokeV4"
+  statement_id  = "AllowVoicesInvokeVoiceBox"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.voices.function_name
   principal     = "apigateway.amazonaws.com"
@@ -180,7 +180,7 @@ resource "aws_lambda_permission" "api_gateway_voices_v2" {
 }
 
 resource "aws_lambda_permission" "api_gateway_get_post_v2" {
-  statement_id  = "AllowGetPostInvokeV4"
+  statement_id  = "AllowGetPostInvokeVoiceBox"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.get_post.function_name
   principal     = "apigateway.amazonaws.com"
