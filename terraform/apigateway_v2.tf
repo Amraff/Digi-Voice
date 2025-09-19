@@ -163,26 +163,4 @@ resource "aws_api_gateway_stage" "prod_v2" {
 # ------------------------------
 # Lambda Permissions
 # ------------------------------
-resource "aws_lambda_permission" "api_gateway_new_post_v2" {
-  statement_id  = "AllowNewPostInvokeVoiceBox"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.new_posts_lambda.function_name
-  principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_api_gateway_rest_api.voicebox_api.execution_arn}/*/*"
-}
-
-resource "aws_lambda_permission" "api_gateway_voices_v2" {
-  statement_id  = "AllowVoicesInvokeVoiceBox"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.voices.function_name
-  principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_api_gateway_rest_api.voicebox_api.execution_arn}/*/*"
-}
-
-resource "aws_lambda_permission" "api_gateway_get_post_v2" {
-  statement_id  = "AllowGetPostInvokeVoiceBox"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.get_post.function_name
-  principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_api_gateway_rest_api.voicebox_api.execution_arn}/*/*"
-}
+# Lambda permissions removed to avoid conflicts - using existing permissions
