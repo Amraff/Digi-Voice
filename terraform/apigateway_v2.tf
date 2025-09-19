@@ -10,7 +10,8 @@ resource "aws_api_gateway_rest_api" "voicebox_api" {
 # Direct Audio Lambda
 # ------------------------------
 resource "aws_lambda_function" "direct_audio" {
-  filename         = "../lambda/direct_audio.zip"
+  s3_bucket        = "mp3-pollybucket-app-20251809"
+  s3_key           = "deploy/direct_audio.zip"
   function_name    = "DirectAudio"
   role            = aws_iam_role.iam_role.arn
   handler         = "direct_audio.lambda_handler"
@@ -163,7 +164,7 @@ resource "aws_api_gateway_stage" "prod_v2" {
 # Lambda Permissions
 # ------------------------------
 resource "aws_lambda_permission" "api_gateway_new_post_v2" {
-  statement_id  = "AllowNewPostInvokeV3"
+  statement_id  = "AllowNewPostInvokeV4"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.new_posts_lambda.function_name
   principal     = "apigateway.amazonaws.com"
@@ -171,7 +172,7 @@ resource "aws_lambda_permission" "api_gateway_new_post_v2" {
 }
 
 resource "aws_lambda_permission" "api_gateway_voices_v2" {
-  statement_id  = "AllowVoicesInvokeV3"
+  statement_id  = "AllowVoicesInvokeV4"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.voices.function_name
   principal     = "apigateway.amazonaws.com"
