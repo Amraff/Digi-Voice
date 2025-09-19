@@ -2,7 +2,8 @@
 // API Base URL (your deployed API Gateway endpoint)
 // ---------------------------
 // TODO: Replace with your actual API Gateway URL from Terraform output
-var API_BASE_URL = "https://528y1o1xm3.execute-api.us-east-1.amazonaws.com/prod";
+// TODO: Update this URL after deployment
+var API_BASE_URL = "https://528y1o1xm3.execute-api.us-east-1.amazonaws.com/prod"; // Will be updated to new API Gateway URL
 
 // Fallback voices when API is not available
 var FALLBACK_VOICES = [
