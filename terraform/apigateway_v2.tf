@@ -51,7 +51,7 @@ resource "aws_api_gateway_integration" "direct_audio_lambda" {
 }
 
 resource "aws_lambda_permission" "api_gateway_direct_audio" {
-  statement_id  = "AllowDirectAudioInvoke"
+  statement_id  = "AllowDirectAudioInvokeVoiceBox"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.direct_audio.function_name
   principal     = "apigateway.amazonaws.com"
