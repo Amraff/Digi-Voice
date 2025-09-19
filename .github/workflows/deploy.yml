@@ -62,6 +62,13 @@ jobs:
           cp voices.py ../deploy/voices/
           cd ../deploy/voices
           zip -r ../voices.zip .
+          cd ../../lambda
+          
+          # Direct Audio Lambda
+          mkdir -p ../deploy/direct_audio
+          cp direct_audio.py ../deploy/direct_audio/
+          cd ../deploy/direct_audio
+          zip -r ../direct_audio.zip .
           cd ../..
 
       - name: Upload Lambda Zips to S3
