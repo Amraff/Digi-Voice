@@ -180,7 +180,7 @@ resource "aws_lambda_permission" "api_gateway_voices_v2" {
 }
 
 resource "aws_lambda_permission" "api_gateway_get_post_v2" {
-  statement_id  = "AllowGetPostInvokeV3"
+  statement_id  = "AllowGetPostInvokeV4"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.get_post.function_name
   principal     = "apigateway.amazonaws.com"
