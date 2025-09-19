@@ -26,7 +26,7 @@ VoiceBox uses a hybrid architecture combining:
 - **Storage**: S3 for audio files and static hosting
 - **CDN**: CloudFront for global content delivery
 
-![Architecture Diagram](./docs/architecture-diagram.png)
+![architecture Diagram](./docs/architecture-diagram.png)
 
 ## 🛠️ Technology Stack
 
